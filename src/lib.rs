@@ -8,7 +8,7 @@ use fcm_v1::{
     android::{AndroidConfig, AndroidMessagePriority},
     auth::Authenticator,
     message::Message,
-    Client,
+    Client, Error,
 };
 use tokio::sync::OnceCell;
 
@@ -74,8 +74,34 @@ async fn worker() {
             Recipient::Topic(topic) => message.topic = Some(topic),
         }
 
-        if let Err(e) = get_client().await.send(&message).await {
-            log::error!("Error when pushing notification: {e}");
+        for tries in 0..=5 {
+            if tries != 0 {
+                tokio::time::sleep(Duration::from_secs_f32(tries as f32 * 1.5)).await;
+            }
+
+            if let Err(e) = get_client().await.send(&message).await {
+                match e {
+                    Error::FCM { status_code, body } => match status_code {
+                        400 | 404 => {
+                            log::info!("stale token found, invalidating");
+                            todo!("invalid token");
+                            // REMIND: break;
+                        }
+                        500 | 503 => continue,
+                        _ => {
+                            log::error!("user error received: {status_code} {body}");
+                            break;
+                        }
+                    },
+                    Error::Timeout => continue,
+                    _ => {
+                        log::error!("user error received: {e}");
+                        break;
+                    }
+                }
+            } else {
+                break;
+            }
         }
     }
 }

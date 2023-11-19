@@ -211,8 +211,7 @@ checksum = "25cbce373ec4653f1a01a31e8a5e5ec0c622dc27ff9c4e6606eefef5cbbed4a5"
 [[package]]
 name = "fcm_v1"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc9ed4ed7618b2f7581edb6ce28794a10fcc335e196fc2bcf56afee99ad63d10"
+source = "git+https://github.com/Cryptex-github/fcm_v1.git#6100e002b3089691a8e91ae17de655f074bcce06"
 dependencies = [
  "async-trait",
  "reqwest",

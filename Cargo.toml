@@ -9,6 +9,6 @@ edition = "2021"
 
 [dependencies]
 deadqueue = { version = "0.2", default-features = false, features = ["unlimited"] }
-fcm_v1 = "0.3"
+fcm_v1 = { git = "https://github.com/Cryptex-github/fcm_v1.git" }
 log = "0.4"
-tokio = { version = "1", features = ["sync"] }
+tokio = { version = "1", features = ["sync", "time"] }
